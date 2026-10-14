@@ -1,0 +1,36 @@
+# Datasets and Raw Data
+original_data/
+aurora_dataset_sample-master/
+splits/
+data/processed/
+data/raw/
+**/data/processed/
+**/data/raw/
+*.all
+*.xyz
+*.bin
+*.h5
+*.hdf5
+*.nc
+*.parquet
+*.zip
+
+# Python Bytecode and Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+
+# Environment and IDE
+.env
+.venv
+env/
+venv/
+ENV/
+.vscode/
+.idea/
+
+# OS specific
+.DS_Store
+__MACOSX/
+Thumbs.db

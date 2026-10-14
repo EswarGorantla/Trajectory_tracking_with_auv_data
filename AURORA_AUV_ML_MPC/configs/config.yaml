@@ -1,0 +1,27 @@
+# AURORA AUV ML-MPC Project Configuration
+
+paths:
+  raw_csv_path: "c:\\Users\\eswar\\OneDrive\\Dokumen\\RoboticsSEM5\\original_data\\M86\\multibeam_echosounder\\multi-beam-echosounder-index.csv"
+  project_root: "c:\\Users\\eswar\\OneDrive\\Dokumen\\RoboticsSEM5\\AURORA_AUV_ML_MPC"
+  data_dir: "c:\\Users\\eswar\\OneDrive\\Dokumen\\RoboticsSEM5\\AURORA_AUV_ML_MPC\\data"
+  processed_dir: "c:\\Users\\eswar\\OneDrive\\Dokumen\\RoboticsSEM5\\AURORA_AUV_ML_MPC\\data\\processed"
+  models_dir: "c:\\Users\\eswar\\OneDrive\\Dokumen\\RoboticsSEM5\\AURORA_AUV_ML_MPC\\models"
+  results_dir: "c:\\Users\\eswar\\OneDrive\\Dokumen\\RoboticsSEM5\\AURORA_AUV_ML_MPC\\results"
+  reports_dir: "c:\\Users\\eswar\\OneDrive\\Dokumen\\RoboticsSEM5\\AURORA_AUV_ML_MPC\\reports"
+
+hyperparameters:
+  seq_len: 10
+  batch_size: 256
+  lr: 0.001
+  epochs: 30
+  hidden_dim: 64
+
+simulation:
+  dt: 2.0
+  N_sim: 100
+  U_cruise: 1.2
+  k_d_default: 0.05
+
+mpc:
+  horizon: 5
+  num_candidates: 300

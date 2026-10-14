@@ -1,0 +1,26 @@
+[
+  {
+    "scenario": "boundary_corridor",
+    "method": "physics_mpc",
+    "seed": 1001,
+    "final_distance_m": 59.048780477038335,
+    "physical_collisions": 0,
+    "boundary_violations": 23
+  },
+  {
+    "scenario": "case_3_ascent",
+    "method": "physics_mpc",
+    "seed": 1001,
+    "final_distance_m": 55.805985836289466,
+    "physical_collisions": 0,
+    "boundary_violations": 37
+  },
+  {
+    "scenario": "case_2_corridor",
+    "method": "gru_mpc",
+    "seed": 1001,
+    "final_distance_m": 55.1520438401362,
+    "physical_collisions": 0,
+    "boundary_violations": 29
+  }
+]

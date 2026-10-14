@@ -1,0 +1,309 @@
+{
+  "splits": {
+    "train_len": 22360,
+    "val_len": 4792,
+    "test_len": 4792,
+    "total_len": 31944,
+    "time_col": "Time",
+    "train_time_range": [
+      "   18:48:14",
+      "   07:24:12"
+    ],
+    "val_time_range": [
+      "   07:24:14",
+      "   10:03:56"
+    ],
+    "test_time_range": [
+      "   10:03:58",
+      "   12:44:04"
+    ],
+    "train_val_chronological": true,
+    "val_test_chronological": true
+  },
+  "scaler": {
+    "feature_mean_saved": [
+      1.2133727544165709,
+      0.22595492602531522,
+      -0.014703947448454857,
+      0.0425425881859579,
+      0.023359536436266128,
+      68.99466010447668
+    ],
+    "feature_var_saved": [
+      0.047051812926816136,
+      0.00043555302643659356,
+      0.0024819235623343397,
+      0.8429438168277776,
+      0.15470064342014525,
+      998.3222690447585
+    ],
+    "feature_mean_computed": [
+      1.2133727544165709,
+      0.22595492602531522,
+      -0.014703947448454857,
+      0.0425425881859579,
+      0.023359536436266128,
+      68.99466010447668
+    ],
+    "feature_var_computed": [
+      0.047051812926816136,
+      0.00043555302643659356,
+      0.0024819235623343397,
+      0.8429438168277776,
+      0.15470064342014525,
+      998.3222690447585
+    ],
+    "max_abs_diff_mean": 0.0,
+    "max_abs_diff_var": 0.0
+  },
+  "kd": {
+    "refit": 0.06073033924634527,
+    "claimed": 0.06073,
+    "diff": 3.3924634527254804e-07
+  },
+  "architecture": {
+    "total_params": 41095,
+    "param_shapes": {
+      "gru.weight_ih_l0": [
+        192,
+        6
+      ],
+      "gru.weight_hh_l0": [
+        192,
+        64
+      ],
+      "gru.bias_ih_l0": [
+        192
+      ],
+      "gru.bias_hh_l0": [
+        192
+      ],
+      "gru.weight_ih_l1": [
+        192,
+        64
+      ],
+      "gru.weight_hh_l1": [
+        192,
+        64
+      ],
+      "gru.bias_ih_l1": [
+        192
+      ],
+      "gru.bias_hh_l1": [
+        192
+      ],
+      "fc.0.weight": [
+        32,
+        64
+      ],
+      "fc.0.bias": [
+        32
+      ],
+      "fc.2.weight": [
+        7,
+        32
+      ],
+      "fc.2.bias": [
+        7
+      ]
+    },
+    "has_layernorm_weights": false,
+    "fc_layers": [
+      "fc.0.weight",
+      "fc.0.bias",
+      "fc.2.weight",
+      "fc.2.bias"
+    ]
+  },
+  "hybrid_code": {
+    "p1_north_east_residual_used": true,
+    "p2_north_east_residual_used": true,
+    "p2_pitch_damping_scaling": true,
+    "p2_yaw_damping_scaling": true
+  },
+  "one_step_test_metrics": [
+    {
+      "State Variable": "North Position (m)",
+      "Physics MAE": 0.4649,
+      "Physics RMSE": 0.731,
+      "Physics R\u00b2": 1.0,
+      "ML-Only MAE": 1.6896,
+      "ML-Only RMSE": 2.0301,
+      "ML-Only R\u00b2": 1.0,
+      "Hybrid MAE": 0.4534,
+      "Hybrid RMSE": 0.7211,
+      "Hybrid R\u00b2": 1.0,
+      "Hybrid Improvement (%)": 1.36
+    },
+    {
+      "State Variable": "East Position (m)",
+      "Physics MAE": 0.3272,
+      "Physics RMSE": 0.7382,
+      "Physics R\u00b2": 0.9998,
+      "ML-Only MAE": 0.7432,
+      "ML-Only RMSE": 1.1589,
+      "ML-Only R\u00b2": 0.9995,
+      "Hybrid MAE": 0.3332,
+      "Hybrid RMSE": 0.7679,
+      "Hybrid R\u00b2": 0.9998,
+      "Hybrid Improvement (%)": -4.04
+    },
+    {
+      "State Variable": "Depth (m)",
+      "Physics MAE": 0.0758,
+      "Physics RMSE": 0.1284,
+      "Physics R\u00b2": 1.0,
+      "ML-Only MAE": 0.0893,
+      "ML-Only RMSE": 0.1742,
+      "ML-Only R\u00b2": 1.0,
+      "Hybrid MAE": 0.0612,
+      "Hybrid RMSE": 0.1141,
+      "Hybrid R\u00b2": 1.0,
+      "Hybrid Improvement (%)": 11.14
+    },
+    {
+      "State Variable": "Roll Angle (rad)",
+      "Physics MAE": 0.0346,
+      "Physics RMSE": 0.0805,
+      "Physics R\u00b2": 0.4615,
+      "ML-Only MAE": 0.0288,
+      "ML-Only RMSE": 0.0752,
+      "ML-Only R\u00b2": 0.5306,
+      "Hybrid MAE": 0.0288,
+      "Hybrid RMSE": 0.0752,
+      "Hybrid R\u00b2": 0.5306,
+      "Hybrid Improvement (%)": 6.64
+    },
+    {
+      "State Variable": "Pitch Angle (rad)",
+      "Physics MAE": 0.0278,
+      "Physics RMSE": 0.0478,
+      "Physics R\u00b2": 0.6267,
+      "ML-Only MAE": 0.0224,
+      "ML-Only RMSE": 0.0398,
+      "ML-Only R\u00b2": 0.741,
+      "Hybrid MAE": 0.0224,
+      "Hybrid RMSE": 0.0398,
+      "Hybrid R\u00b2": 0.741,
+      "Hybrid Improvement (%)": 16.71
+    },
+    {
+      "State Variable": "Heading Angle (rad)",
+      "Physics MAE": 0.0345,
+      "Physics RMSE": 0.0603,
+      "Physics R\u00b2": 0.9989,
+      "ML-Only MAE": 0.0243,
+      "ML-Only RMSE": 0.0511,
+      "ML-Only R\u00b2": 0.9992,
+      "Hybrid MAE": 0.0243,
+      "Hybrid RMSE": 0.0511,
+      "Hybrid R\u00b2": 0.9992,
+      "Hybrid Improvement (%)": 15.35
+    },
+    {
+      "State Variable": "Surge Speed (m/s)",
+      "Physics MAE": 0.1609,
+      "Physics RMSE": 0.2416,
+      "Physics R\u00b2": 0.6384,
+      "ML-Only MAE": 0.1243,
+      "ML-Only RMSE": 0.1992,
+      "ML-Only R\u00b2": 0.7541,
+      "Hybrid MAE": 0.1455,
+      "Hybrid RMSE": 0.2218,
+      "Hybrid R\u00b2": 0.6953,
+      "Hybrid Improvement (%)": 8.2
+    }
+  ],
+  "feature_distributions": {
+    "GroundSpeed": {
+      "min": 0.025298,
+      "p01": 0.44191674,
+      "p05": 0.8165163,
+      "p50": 1.235887,
+      "p95": 1.4661073,
+      "p99": 1.5518307599999985,
+      "max": 3.249484,
+      "mean": 1.2133727544165662,
+      "std": 0.21691429857622607
+    },
+    "Roll": {
+      "min": 0.019251,
+      "p01": 0.18230886,
+      "p05": 0.213662,
+      "p50": 0.223244,
+      "p95": 0.2506786999999998,
+      "p99": 0.32788355999999996,
+      "max": 0.478375,
+      "mean": 0.22595492602531417,
+      "std": 0.020869907197603607
+    },
+    "Pitch": {
+      "min": -0.408737,
+      "p01": -0.27568869999999995,
+      "p05": -0.052136499999999995,
+      "p50": -0.012305,
+      "p95": 0.018065799999999976,
+      "p99": 0.09082741999999869,
+      "max": 0.464273,
+      "mean": -0.014703947448454761,
+      "std": 0.04981890767905624
+    },
+    "cos(Heading)": {
+      "min": -0.999999999985708,
+      "p01": -0.9999975939429289,
+      "p05": -0.9999140802481704,
+      "p50": 0.24466902376929697,
+      "p95": 0.9991346978461727,
+      "p99": 0.999953889256249,
+      "max": 0.9999999998555,
+      "mean": 0.042542588185957915,
+      "std": 0.9181197181347199
+    },
+    "sin(Heading)": {
+      "min": -0.9999989018091309,
+      "p01": -0.99721390443429,
+      "p05": -0.8624455831556261,
+      "p50": 0.028823660964184882,
+      "p95": 0.8939225153021018,
+      "p99": 0.9952711749560893,
+      "max": 0.999999217908369,
+      "mean": 0.023359536436266357,
+      "std": 0.39332002672142835
+    },
+    "Depth": {
+      "min": 0.000857,
+      "p01": 0.24672058000000002,
+      "p05": 0.6431110000000001,
+      "p50": 58.888908,
+      "p95": 105.548615,
+      "p99": 107.0804027,
+      "max": 108.384827,
+      "mean": 68.99466010447695,
+      "std": 31.596238210343355
+    }
+  },
+  "ood_analysis": {
+    "train_depth_range": [
+      0.000857,
+      108.384827
+    ],
+    "phase2_specified_depth_range": [
+      10.0,
+      60.0
+    ],
+    "train_speed_range": [
+      0.025298,
+      3.249484
+    ],
+    "phase2_specified_speed_range": [
+      0.5,
+      2.0
+    ]
+  },
+  "sign_convention_check": {
+    "initial_depth": 20.0,
+    "pitch_rad": 0.1,
+    "next_depth": 19.76039980004761,
+    "depth_decreased_on_climb": true
+  }
+}

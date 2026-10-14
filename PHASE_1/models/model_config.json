@@ -1,0 +1,31 @@
+{
+  "project_title": "Learning-Based Dynamic Modeling of an AUV Using AURORA Multi-Sensor Data",
+  "best_model_architecture": "GRU",
+  "sequence_length": 10,
+  "sampling_dt_seconds": 2.0,
+  "sampling_frequency_hz": 0.5,
+  "drag_coefficient_kd": 0.06073033924634527,
+  "cruise_speed_u": 1.2,
+  "state_variables": [
+    "North",
+    "East",
+    "depth",
+    "Roll",
+    "Pitch",
+    "Heading",
+    "GroundSpeed"
+  ],
+  "input_features": [
+    "GroundSpeed",
+    "Roll",
+    "Pitch",
+    "cos(Heading)",
+    "sin(Heading)",
+    "depth"
+  ],
+  "train_samples": 22360,
+  "val_samples": 4792,
+  "test_samples": 4792,
+  "best_epoch": 10,
+  "best_val_loss": 0.12945028952864712
+}

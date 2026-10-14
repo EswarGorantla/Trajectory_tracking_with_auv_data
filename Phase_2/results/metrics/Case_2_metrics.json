@@ -1,0 +1,29 @@
+{
+  "start_position": [
+    20.0,
+    10.0,
+    30.0
+  ],
+  "goal_position": [
+    80.0,
+    90.0,
+    50.0
+  ],
+  "goal_tolerance_m": 5.0,
+  "final_position": [
+    77.13630102246084,
+    87.19300397362069,
+    48.71189494604914
+  ],
+  "final_distance_to_goal_m": 4.21179452918608,
+  "goal_reached": true,
+  "time_to_goal_s": 74.0,
+  "total_simulation_steps": 38,
+  "total_simulation_time_s": 74.0,
+  "total_path_length_m": 98.52496358015155,
+  "maximum_distance_to_goal_m": 101.9803902718557,
+  "boundary_violations": 0,
+  "obstacle_violations": 0,
+  "total_constraint_violations": 0,
+  "total_control_effort": 0.6934297455031236
+}

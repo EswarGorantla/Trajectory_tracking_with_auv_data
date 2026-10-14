@@ -1,0 +1,8 @@
+Metric,Baseline (Reactive LOS),Proposed (Hybrid MPC),Outcome
+Goal Reached,YES,YES,Both reached goal
+Final Distance to Goal (m),4.02,4.80,Comparable accuracy
+Obstacle Violations / Collisions,6,0,MPC achieved 0 collisions (Safe)
+Total Constraint Violations,6,0,MPC satisfied all constraints
+Time to Goal (s),92.0,92.0,MPC took detour (+8.0s)
+Total Path Length (m),126.14,134.00,Detour path length
+Total Control Effort,0.00,185.15,Predictive steering

@@ -1,0 +1,4 @@
+Scenario,Description,Start,Goal,Success,Time to Goal (s),Path Length (m),Final Error (m),Boundary Violations,Constraint Violations,Control Effort
+Case_1,Diagonal climbing dive (North-East),"(0, 0, 20)","(100, 80, 40)",YES,110.0,127.31,4.3,0,0,1.27
+Case_2,Interior boundary transit (Eastward bias),"(20, 10, 30)","(80, 90, 50)",YES,74.0,98.52,4.21,0,0,0.69
+Case_3,South-East ascent transit (High depth to shallow),"(100, 20, 50)","(20, 80, 20)",YES,130.0,150.71,4.29,0,0,38.14

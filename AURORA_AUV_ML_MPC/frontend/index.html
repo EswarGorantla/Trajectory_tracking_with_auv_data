@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURORA AUV Dynamic Prediction & MPC Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <!-- Local Chart.js for instant offline loading -->
+    <script src="/static/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="main-header">
+            <div class="header-brand">
+                <div class="logo-icon">⚓</div>
+                <div>
+                    <h1>AURORA AUV Dynamic Prediction & MPC</h1>
+                    <p class="subtitle">Learning-Based Dynamic Modeling for Autonomous Underwater Vehicles</p>
+                </div>
+            </div>
+            <div class="status-ribbon" id="status-ribbon">
+                <div class="status-pill status-loading" id="system-status">
+                    <span class="status-dot"></span> <span id="status-text">Connecting...</span>
+                </div>
+                <div class="meta-tag" id="model-tag">Model: Loading...</div>
+                <div class="meta-tag" id="device-tag">Device: CPU</div>
+                <div class="meta-tag" id="freq-tag">0.5 Hz (dt=2.0s)</div>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab('tab-predict')">⚡ Single-Step State Predictor</button>
+            <button class="tab-btn" onclick="switchTab('tab-upload')">📁 Upload Custom CSV Data</button>
+            <button class="tab-btn" onclick="switchTab('tab-sequence')">📈 Multi-Step Trajectory Replay</button>
+            <button class="tab-btn" onclick="switchTab('tab-mpc')">🎮 Closed-Loop MPC Control</button>
+        </nav>
+
+        <!-- TAB 1: Single-Step Predictor -->
+        <main class="tab-content active" id="tab-predict">
+            <div class="grid-2col">
+                <!-- Input Panel -->
+                <section class="card input-card">
+                    <div class="card-header">
+                        <h2>Current AUV State (t)</h2>
+                        <div class="btn-row-sm">
+                            <button type="button" class="btn btn-sm btn-outline" onclick="clearCustomState()">
+                                ✏️ Clear Form
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline" id="btn-load-sample" onclick="loadAURORASample()">
+                                🎯 Load Sample
+                            </button>
+                        </div>
+                    </div>
+
+                    <form id="state-form" onsubmit="event.preventDefault(); runPrediction();">
+                        <div class="form-section-title">1. Current Position (Earth Frame)</div>
+                        <div class="input-row">
+                            <div class="form-group">
+                                <label for="in-north">North X (m)</label>
+                                <input type="number" id="in-north" step="0.01" value="100.00" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="in-east">East Y (m)</label>
+                                <input type="number" id="in-east" step="0.01" value="50.00" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="in-depth">Depth Z (m)</label>
+                                <input type="number" id="in-depth" step="0.01" min="0" value="25.00" required>
+                            </div>
+                        </div>
+
+                        <div class="form-section-title">2. Current Velocity & Attitude (Body Frame)</div>
+                        <div class="input-row">
+                            <div class="form-group">
+                                <label for="in-speed">Surge Speed (m/s)</label>
+                                <input type="number" id="in-speed" step="0.01" min="0" max="3" value="1.25" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="in-pitch">Pitch (deg)</label>
+                                <input type="number" id="in-pitch" step="0.1" value="2.00" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="in-heading">Heading (deg)</label>
+                                <input type="number" id="in-heading" step="0.1" min="0" max="360" value="45.00" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="in-roll">Roll (deg)</label>
+                                <input type="number" id="in-roll" step="0.1" value="0.00" required>
+                            </div>
+                        </div>
+
+                        <div class="form-section-title">3. Commanded Inputs (For Next Step t+1)</div>
+                        <div class="input-row">
+                            <div class="form-group">
+                                <label for="cmd-speed">Cmd Speed (m/s)</label>
+                                <input type="number" id="cmd-speed" step="0.01" min="0.5" max="2.0" value="1.25" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="cmd-pitch">Cmd Pitch (deg)</label>
+                                <input type="number" id="cmd-pitch" step="0.1" value="2.00" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="cmd-heading">Cmd Heading (deg)</label>
+                                <input type="number" id="cmd-heading" step="0.1" min="0" max="360" value="45.00" required>
+                            </div>
+                        </div>
+
+                        <div class="form-section-title">4. ML Residual Architecture</div>
+                        <div class="input-row">
+                            <div class="form-group full-width">
+                                <select id="select-model">
+                                    <option value="LSTM" selected>Physics + LSTM Residual Network (Best Control)</option>
+                                    <option value="GRU">Physics + GRU Residual Network (Best Predictor)</option>
+                                    <option value="MLP">Physics + Feedforward MLP</option>
+                                    <option value="Random Forest">Physics + Random Forest Baseline</option>
+                                    <option value="Linear">Physics + Linear Baseline</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="btn-group">
+                            <button type="submit" class="btn btn-primary" id="btn-predict">
+                                ⚡ Predict Future State
+                            </button>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- Output Panel -->
+                <section class="output-column">
+                    <!-- Dynamics Analysis Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Predicted Future State & Dynamics Analysis (t+1)</h2>
+                            <span class="badge badge-info" id="pred-time-badge">Ready</span>
+                        </div>
+
+                        <div class="results-table-wrapper">
+                            <table class="data-table" id="prediction-table">
+                                <thead>
+                                    <tr>
+                                        <th>State Variable</th>
+                                        <th>Input State (t)</th>
+                                        <th>Physics Model</th>
+                                        <th>AI Residual (Δ)</th>
+                                        <th>Final Predicted (t+1)</th>
+                                        <th>Actual (If Sample Loaded)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>North Position (m)</strong></td>
+                                        <td id="res-cur-north">-</td>
+                                        <td id="res-phy-north">-</td>
+                                        <td id="res-ai-north" class="text-accent">-</td>
+                                        <td id="res-fin-north" class="text-highlight">-</td>
+                                        <td id="res-act-north">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>East Position (m)</strong></td>
+                                        <td id="res-cur-east">-</td>
+                                        <td id="res-phy-east">-</td>
+                                        <td id="res-ai-east" class="text-accent">-</td>
+                                        <td id="res-fin-east" class="text-highlight">-</td>
+                                        <td id="res-act-east">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Depth (m)</strong></td>
+                                        <td id="res-cur-depth">-</td>
+                                        <td id="res-phy-depth">-</td>
+                                        <td id="res-ai-depth" class="text-accent">-</td>
+                                        <td id="res-fin-depth" class="text-highlight">-</td>
+                                        <td id="res-act-depth">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Surge Speed (m/s)</strong></td>
+                                        <td id="res-cur-speed">-</td>
+                                        <td id="res-phy-speed">-</td>
+                                        <td id="res-ai-speed" class="text-accent">-</td>
+                                        <td id="res-fin-speed" class="text-highlight">-</td>
+                                        <td id="res-act-speed">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Heading (deg)</strong></td>
+                                        <td id="res-cur-heading">-</td>
+                                        <td id="res-phy-heading">-</td>
+                                        <td id="res-ai-heading" class="text-accent">-</td>
+                                        <td id="res-fin-heading" class="text-highlight">-</td>
+                                        <td id="res-act-heading">-</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="improvement-banner" id="improvement-box" style="display:none;">
+                            <div class="metric-block">
+                                <span class="metric-lbl">Physics-Only Error</span>
+                                <span class="metric-val" id="phy-err-val">-</span>
+                            </div>
+                            <div class="metric-block">
+                                <span class="metric-lbl">Hybrid AI Error</span>
+                                <span class="metric-val" id="hyb-err-val">-</span>
+                            </div>
+                            <div class="metric-block highlight">
+                                <span class="metric-lbl">Error Reduction</span>
+                                <span class="metric-val text-success" id="imp-pct-val">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Visual Chart Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Horizontal Position Shift (East Y vs North X)</h2>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="predictChart"></canvas>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- TAB 4: Upload Custom CSV Data -->
+        <main class="tab-content" id="tab-upload">
+            <div class="card">
+                <div class="card-header">
+                    <h2>📁 Upload Custom AUV Telemetry (.CSV)</h2>
+                    <a href="/static/sample_trajectory_template.csv" download class="btn btn-outline">
+                        ⬇️ Download Sample CSV Template
+                    </a>
+                </div>
+                
+                <p style="color: var(--text-secondary); margin-bottom: 16px; font-size: 0.9rem;">
+                    Upload any CSV file with your own AUV telemetry. Expected columns: <code>North, East, depth, Roll, Pitch, Heading, GroundSpeed</code>. The trained model will evaluate every row and generate forward dynamics predictions.
+                </p>
+
+                <div class="upload-box-container">
+                    <input type="file" id="csv-file-input" accept=".csv" class="file-input">
+                    <div class="controls-row" style="margin-top: 10px;">
+                        <label>Select Model:
+                            <select id="upload-model-select">
+                                <option value="LSTM" selected>LSTM Residual Model</option>
+                                <option value="GRU">GRU Residual Model</option>
+                                <option value="MLP">MLP Residual Model</option>
+                            </select>
+                        </label>
+                        <button class="btn btn-primary" onclick="uploadCSVAndPredict()">
+                            🚀 Upload & Predict Entire File
+                        </button>
+                    </div>
+                </div>
+
+                <div id="upload-results-container" style="display:none; margin-top: 20px;">
+                    <div class="grid-2col">
+                        <div class="chart-container" style="height: 350px;">
+                            <canvas id="uploadChartXY"></canvas>
+                        </div>
+                        <div class="chart-container" style="height: 350px;">
+                            <canvas id="uploadChartDepth"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="results-table-wrapper" style="margin-top: 20px; max-height: 320px; overflow-y: auto;">
+                        <table class="data-table" id="upload-results-table">
+                            <thead>
+                                <tr>
+                                    <th>Step</th>
+                                    <th>Time</th>
+                                    <th>Input Position (X, Y, Z)</th>
+                                    <th>Input Speed / Heading</th>
+                                    <th>Physics Prediction (t+1)</th>
+                                    <th>AI Correction (Δ)</th>
+                                    <th>Final Predicted Future State (t+1)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="upload-table-body">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- TAB 2: Multi-Step Trajectory Replay -->
+        <main class="tab-content" id="tab-sequence">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Multi-Step Prediction Horizon Replay</h2>
+                    <div class="controls-row">
+                        <label>Start Index: <input type="number" id="seq-start-idx" value="100" min="10" max="5000" style="width: 80px;"></label>
+                        <label>Steps: <input type="number" id="seq-steps" value="20" min="5" max="50" style="width: 60px;"></label>
+                        <button class="btn btn-primary" onclick="runSequenceForecast()">▶ Run Trajectory Forecast</button>
+                    </div>
+                </div>
+                <div class="grid-2col">
+                    <div class="chart-container" style="height: 380px;">
+                        <canvas id="sequenceChartXY"></canvas>
+                    </div>
+                    <div class="chart-container" style="height: 380px;">
+                        <canvas id="sequenceChartDepth"></canvas>
+                    </div>
+                </div>
+                <div class="metrics-summary-bar" id="seq-metrics-bar" style="margin-top: 15px;">
+                    <div>Physics Position RMSE: <strong id="seq-phy-pos">-</strong> | Depth RMSE: <strong id="seq-phy-depth">-</strong></div>
+                    <div>AI-Enhanced Position RMSE: <strong id="seq-ai-pos" class="text-success">-</strong> | Depth RMSE: <strong id="seq-ai-depth" class="text-success">-</strong></div>
+                </div>
+            </div>
+        </main>
+
+        <!-- TAB 3: Closed-Loop MPC Trajectory Control -->
+        <main class="tab-content" id="tab-mpc">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Closed-Loop MPC Trajectory Control Simulator</h2>
+                    <div class="controls-row">
+                        <select id="mpc-traj-select">
+                            <option value="3d_sinusoid" selected>3D Sinusoidal Path</option>
+                            <option value="step_waypoint">Square Corner Waypoints</option>
+                            <option value="straight_dive">Straight Survey Dive</option>
+                        </select>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="mpc-dist-check"> Current Disturbance (+0.15 m/s East)
+                        </label>
+                        <button class="btn btn-primary" onclick="runMPCSimulation()">🎮 Run MPC Simulation</button>
+                    </div>
+                </div>
+
+                <div class="grid-2col">
+                    <div class="chart-container" style="height: 380px;">
+                        <canvas id="mpcChartXY"></canvas>
+                    </div>
+                    <div class="chart-container" style="height: 380px;">
+                        <canvas id="mpcChartDepth"></canvas>
+                    </div>
+                </div>
+
+                <!-- Performance Metrics Table -->
+                <div class="results-table-wrapper" style="margin-top: 20px;">
+                    <h3>Controller Performance Metrics</h3>
+                    <table class="data-table" id="mpc-metrics-table">
+                        <thead>
+                            <tr>
+                                <th>Controller</th>
+                                <th>Position RMSE (m)</th>
+                                <th>Depth RMSE (m)</th>
+                                <th>Heading RMSE (rad)</th>
+                                <th>Control Effort (Jerk)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>PID Controller (LOS)</strong></td>
+                                <td id="mpc-pid-pos">-</td>
+                                <td id="mpc-pid-depth">-</td>
+                                <td id="mpc-pid-head">-</td>
+                                <td id="mpc-pid-eff">-</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Physics-Only MPC</strong></td>
+                                <td id="mpc-phy-pos">-</td>
+                                <td id="mpc-phy-depth">-</td>
+                                <td id="mpc-phy-head">-</td>
+                                <td id="mpc-phy-eff">-</td>
+                            </tr>
+                            <tr class="highlight-row">
+                                <td><strong>AI-Enhanced MPC (LSTM)</strong></td>
+                                <td id="mpc-ai-pos" class="text-success">-</td>
+                                <td id="mpc-ai-depth" class="text-success">-</td>
+                                <td id="mpc-ai-head" class="text-success">-</td>
+                                <td id="mpc-ai-eff">-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Application Script -->
+    <script src="/static/app.js"></script>
+</body>
+</html>

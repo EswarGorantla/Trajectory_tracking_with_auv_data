@@ -1,0 +1,4 @@
+Condition,Description,Goal Reached,Time to Goal (s),Final Error (m),Path Length (m),Boundary Violations,Total Control Effort
+Nominal,"Calm water, perfect state feedback",YES,90.0,4.14,127.92,0,196.31
+Ocean_Current,Simulated 0.20 m/s constant ocean current drift,YES,88.0,4.63,132.53,0,172.66
+Current_Plus_Noise,Simulated ocean current + 0.5m acoustic position jitter,YES,94.0,4.65,132.51,0,173.6

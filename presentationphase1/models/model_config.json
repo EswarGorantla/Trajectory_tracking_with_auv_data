@@ -1,0 +1,37 @@
+{
+  "project_title": "Learning-Based Dynamic Modeling of an AUV Using Multi-Sensor AURORA Data",
+  "model_version": "1.0.0",
+  "architecture": "2-Layer Recurrent GRU",
+  "input_features": [
+    "GroundSpeed",
+    "Roll",
+    "Pitch",
+    "cos(Heading)",
+    "sin(Heading)",
+    "depth"
+  ],
+  "target_features": [
+    "North",
+    "East",
+    "depth",
+    "Roll",
+    "Pitch",
+    "Heading",
+    "GroundSpeed"
+  ],
+  "sequence_length": 10,
+  "sampling_rate_hz": 0.5,
+  "sampling_dt_seconds": 2.0,
+  "hidden_size": 64,
+  "number_of_layers": 2,
+  "trainable_parameters": 41095,
+  "drag_coefficient_kd": 0.06073033924634527,
+  "cruise_speed_u": 1.2,
+  "normalization_method": "StandardScaler (fitted strictly on training set)",
+  "train_samples": 22360,
+  "validation_samples": 4792,
+  "test_samples": 4792,
+  "best_epoch": 7,
+  "best_validation_loss": 0.13094180993134383,
+  "prediction_horizon": 1
+}

@@ -1,0 +1,43 @@
+# ==============================================================================
+# PHASE 2: MODEL PREDICTIVE CONTROL (MPC) CONFIGURATION
+# Platform: Autosub6000 AUV with Phase 1 Physics + GRU Residual Dynamics
+# ==============================================================================
+
+# Simulation & Timing
+dt: 2.0                          # Step interval in seconds (matches Phase 1: 0.50 Hz)
+prediction_horizon: 10           # Receding horizon prediction steps (10 steps = 20.0 seconds)
+control_horizon: 10              # Control sequence horizon
+goal_tolerance: 5.0              # Acceptance radius to declare goal reached (meters)
+max_simulation_steps: 120        # Maximum simulation steps (120 steps * 2.0s = 240s)
+
+# Objective Function Weights
+weight_goal: 30.0                # Terminal distance to destination Point B
+weight_tracking: 6.0             # Cross-track progress along direct line-of-sight path
+weight_control: 1.0              # Penalty on excessive speed deviations from cruise
+weight_smoothness: 4.0           # Penalty on control slew rate (delta u between steps)
+weight_constraints: 200.0        # Penalty on spatial boundaries and obstacle safety margins
+
+# Vehicle Physical Constraints
+minimum_speed: 0.5               # Minimum surge speed (m/s) to maintain rudder/fin authority
+maximum_speed: 2.0               # Maximum safe propulsion surge speed (m/s)
+cruise_speed: 1.2                # Nominal survey cruise speed (m/s)
+maximum_pitch: 0.35              # Maximum pitch angle in radians (~20.0 degrees)
+maximum_roll: 0.50               # Maximum allowed roll angle in radians (~28.6 degrees)
+max_pitch_rate: 0.10             # Maximum pitch rate per step in radians (~5.7 deg/step)
+max_heading_rate: 0.20           # Maximum heading yaw rate per step in radians (~11.5 deg/step)
+
+# Default Rectangular 3D Operational Boundaries (meters)
+default_boundaries:
+  north_min: 0.0
+  north_max: 120.0
+  east_min: 0.0
+  east_max: 100.0
+  depth_min: 10.0
+  depth_max: 60.0
+
+# Sampling-Based MPC Optimizer Parameters
+optimizer:
+  num_candidates: 70             # Number of candidate control trajectories evaluated per cycle
+  elite_fraction: 0.20           # Top candidates utilized for distribution refinement
+  iterations: 3                  # Cross-entropy / MPPI optimization iterations per cycle
+  use_warm_start: true           # Shift previous best control sequence as seed
